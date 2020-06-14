@@ -1,19 +1,16 @@
 FROM ubuntu:18.04
 MAINTAINER Hyungi Lee <hyungi.lee.622@gmail.com>
 
-# Avoiding user interaction with tzdata
-ENV DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update
-RUN apt-get install -y apache2 # Install Apache web server (Only 'yes')
-RUN apt-get install -y software-properties-common
-RUN add-apt-repository ppa:ondrej/php # For Installing PHP 5.6
-RUN apt-get update
-RUN apt-get install -y php5.6
+RUN apt-get install -y nginx
+RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf
+RUN chown -R www-data:www-data /var/lib/nginx
 
-# Connect PHP & MySQL
-RUN apt-get install -y php5.6-mysql
+VOLUME ["/data", "/etc/nginx/site-enabled", "/var/log/nginx"]
+
+WORKDIR /etc/nginx
+
+CMD ["nginx"]
 
 EXPOSE 80
-
-CMD ["apachectl", "-D", "FOREGROUND"]
+EXPOSE 443
